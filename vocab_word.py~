@@ -8,7 +8,7 @@ from os.path import isfile, join
 from numpy import *
 from scipy.cluster.vq import kmeans,vq
 
-def test_feature_detector(imfname, num_slice):
+def test_feature_detector(detector, imfname, num_slice):
     descript = 'SIFT'
     image = cv2.imread(imfname)
 
@@ -26,7 +26,7 @@ def test_feature_detector(imfname, num_slice):
     kp = []
     des = []
     for i in range(num_slice):
-        mask[i, 0:h/2, i*w/num_slice:(i+1)*w/num_slice] = 255
+        mask[i, 0:h, i*w/num_slice:(i+1)*w/num_slice] = 255
         kp.append(sift.detect(im, mask[i]))
         kp[i], descript = sift.compute(im, kp[i])
         des.append(descript)
@@ -35,10 +35,7 @@ def test_feature_detector(imfname, num_slice):
         cv2.imwrite('sift_keypoints%d.jpg' % (i), img)
 
     t2 = time.time()
-    print 'number of KeyPoint objects', len(kp), '(time', t2-t1, ')'
-    print 'length of descriptor', len(des)
-    for i in range(num_slice):
-        print 'descriptor[%d]' % (i), des[i].shape
+    print detector, 'number of KeyPoint objects', len(kp), '(time', t2-t1, ')'
 
     return kp, des
 
@@ -47,8 +44,8 @@ def buildVocabulary(path,k,grid_m,grid_n):
     total_desc = array([])
     dict_vocab = array([])
     for f in files:
-        #img = cv2.imread(path+f)
-        file_desc,temp = test_feature_detector(path+f, grid_n)
+        img = cv2.imread(path+f)
+        file_desc = localFeature(img,grid_m,grid_n,i,j)
         for i in range(0,grid_m):
             for j in range(0,grid_n):
                 desc = file_desc[j]
@@ -72,9 +69,8 @@ def buildVocabulary(path,k,grid_m,grid_n):
                dict_vocab = [vocab]
             else:
                dict_vocab = np.append(dict_vocab,[vocab],axis = 0)
-    return dict_vocab
 
-"""def findWord(dict_vocab,path,grid_m,grid_n):
+def findWord(dict_vocab,path,grid_m,grid_n):
     files = [ f for f in listdir(path) if isfile(join(path,f)) ]
     word_hist = array([])
     for f in files:
@@ -92,7 +88,7 @@ def buildVocabulary(path,k,grid_m,grid_n):
            word_hist = line_hist
         else:
            word_hist = np.vstack((word_hist,line_hist))
-     return word_hist"""
+     return word_hist
 
 def buildWordHist(desc,dict_part):
     index,temp = vq(desc,dict_part)
@@ -101,7 +97,7 @@ def buildWordHist(desc,dict_part):
     return hist
 
 def main():
-    path = './images/'
+    path = '/image/'
     d_path = path+'database/'
     #t_path = path+'testcase/'
     k = 500
@@ -110,5 +106,3 @@ def main():
     dict_vocab = buildVocabulary(d_path,k,grid_m,grid_n)
     #d_hist = findWord(dict_vocab,d_path,grid_m,grid_n)
     #t_hist = findWord(dict_vocab,t_path,grid_m,grid_n)
-
-main()
