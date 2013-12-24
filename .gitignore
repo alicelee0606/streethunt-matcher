@@ -38,3 +38,5 @@ nosetests.xml
 # StreetView Images
 *.jpg
 images
+*.swp
+*~
