@@ -21,7 +21,7 @@ def test_feature_detector(imfname, num_slice):
     sift = cv2.SIFT(0, 3, 0.04, 10, 1.6)
 #    surf = cv2.SURF()
     h,w = im.shape
-    print 'h,w = ', h,w
+#    print 'h,w = ', h,w
     mask = np.zeros((num_slice,h,w), np.uint8)
     kp = []
     des = []
@@ -35,39 +35,34 @@ def test_feature_detector(imfname, num_slice):
         cv2.imwrite('sift_keypoints%d.jpg' % (i), img)
 
     t2 = time.time()
-    print 'number of KeyPoint objects', len(kp), '(time', t2-t1, ')'
-    print 'length of descriptor', len(des)
-    for i in range(num_slice):
-        print 'descriptor[%d]' % (i), des[i].shape
+#    print 'number of KeyPoint objects', len(kp), '(time', t2-t1, ')'
+#    print 'length of descriptor', len(des)
+#    for i in range(num_slice):
+#        print 'descriptor[%d]' % (i), des[i].shape
 
     return kp, des
 
 def buildVocabulary(path,k,grid_m,grid_n):
     files = [ f for f in listdir(path) if isfile(join(path,f)) ]
-    total_desc = array([])
+    total_desc = []
     dict_vocab = array([])
     for f in files:
+        print f
         #img = cv2.imread(path+f)
-        file_desc,temp = test_feature_detector(path+f, grid_n)
+        keypoints,file_desc = test_feature_detector(path+f, grid_n)
         for i in range(0,grid_m):
             for j in range(0,grid_n):
-                desc = file_desc[j]
-                ij_desc = array([])
-                if len(desc.shape) == 1:
-                   desc = array([desc])
-                if len(ij_desc) == 0:
-                   ij_desc = desc
+                desc = array(file_desc[j])
+                if len(total_desc) < grid_n*i+j+1:
+                   total_desc.append(desc)
                 else:
-                   ij_desc = np.append(ij_desc,desc,axis = 0)
-            if len(total_desc) == 0:
-               total_desc = ij_desc
-            elif total_desc.shape[0] < grid_n*i+j:
-               total_desc = np.append(total_desc,ij_desc,axis =0)
-            else:
-               total_desc = np.vstack((total_desc[grid_n*i+j],ij_desc))
+                   temp = total_desc[grid_n*i+j]
+                   total_desc[grid_n*i+j] = np.vstack((temp,desc))
     for i in range(0,grid_m):
         for j in range(0,grid_n):
+            print j
             vocab,dist = kmeans(total_desc[grid_n*i+j],k) # k is the seed number
+            print 'kmeans done'
             if len(dict_vocab) == 0:
                dict_vocab = [vocab]
             else:
@@ -104,10 +99,11 @@ def main():
     path = './images/'
     d_path = path+'database/'
     #t_path = path+'testcase/'
-    k = 500
+    k = 10
     grid_m = 1
     grid_n = 4
     dict_vocab = buildVocabulary(d_path,k,grid_m,grid_n)
+    print dict_vocab
     #d_hist = findWord(dict_vocab,d_path,grid_m,grid_n)
     #t_hist = findWord(dict_vocab,t_path,grid_m,grid_n)
 
