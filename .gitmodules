@@ -1,0 +1,3 @@
+[submodule "ParsePy"]
+	path = ParsePy
+	url = git@github.com:pktck/ParsePy.git
