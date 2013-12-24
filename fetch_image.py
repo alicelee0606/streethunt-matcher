@@ -1,3 +1,6 @@
+#!/usr/local/bin/python
+#!/usr/bin/python
+
 import os, sys
 import urllib
 import ParsePy

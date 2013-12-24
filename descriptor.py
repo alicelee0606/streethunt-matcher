@@ -1,7 +1,10 @@
+#!/usr/local/bin/python
+#!/usr/bin/python
+
+import os, sys
 import matplotlib.pyplot as plt
 import numpy as np
 import cv2
-import cv
 import time
 
 
@@ -29,7 +32,8 @@ def test_feature_detector(imfname, num_slice):
         des.append(descript)
 #    kp_surf = surf.detect(im, None)
         img = cv2.drawKeypoints(im, kp[i], flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
-        cv2.imwrite('sift_keypoints%d.jpg' % (i), img)
+        omfname = "%s_sift_keypoints%d.jpg" % (os.path.splitext(imfname)[0], i)
+        cv2.imwrite(omfname, img)
 
     t2 = time.time()
     print 'number of KeyPoint objects', len(kp), '(time', t2-t1, ')'
@@ -41,7 +45,7 @@ def test_feature_detector(imfname, num_slice):
 
 
 def main():
-    imfname = r'sv_25.057728_121.550674_6.jpg'
+    imfname = sys.argv[1]
 
     form = ""
     detector = "FAST"
@@ -50,4 +54,7 @@ def main():
     kpts,des = test_feature_detector(imfname, num_slice)
 
 if __name__ == '__main__':
-    main()
+    if len(sys.argv) < 2:
+        print "ERROR: No input file. Usage: python descriptor.py INPUT_FILE_NAME"
+    else:
+        main()
