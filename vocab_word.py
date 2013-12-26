@@ -1,3 +1,6 @@
+#!/usr/local/bin/python
+#!/usr/bin/python
+
 import cv2
 import time
 import numpy as np
@@ -88,4 +91,5 @@ def main():
     dist_table = calcDistance(t_hist,d_hist)
     print dist_table
 
-main()
+if __name__ == '__main__':
+    main()
