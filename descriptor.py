@@ -8,7 +8,7 @@ import cv2
 import time
 
 
-def test_feature_detector(imfname, num_slice):
+def test_feature_detector(imfname, num_slice=1):
     descript = 'SIFT'
     image = cv2.imread(imfname)
 
@@ -51,10 +51,12 @@ def main():
     detector = "FAST"
 
     num_slice = 4
+    if (len(sys.argv) is 3):
+       num_slice = int(sys.argv[2])
     kpts,des = test_feature_detector(imfname, num_slice)
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        print "ERROR: No input file. Usage: python descriptor.py INPUT_FILE_NAME"
+        print "ERROR: No input file. Usage: python descriptor.py INPUT_FILE_NAME [NUM_SLICE]"
     else:
         main()
