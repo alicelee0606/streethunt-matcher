@@ -38,7 +38,7 @@ def buildVocabulary(path,k,grid_m,grid_n):
 
 def findWord(dict_vocab,path,grid_m,grid_n):
     files = [ f for f in listdir(path) if isfile(join(path,f)) ]
-    word_hist = array([])
+    word_hist = []
     for fidx in range(0,30):
         f = files[fidx]
     #for f in files:
@@ -52,10 +52,7 @@ def findWord(dict_vocab,path,grid_m,grid_n):
                    line_hist = hist
                 else:
                    line_hist = np.hstack((line_hist,hist))
-        if len(word_hist) == 0:
-           word_hist = line_hist
-        else:
-           word_hist = np.vstack((word_hist,line_hist))
+        word_hist.append(line_hist)
     return word_hist
 
 def buildWordHist(desc,dict_part):
@@ -66,10 +63,20 @@ def buildWordHist(desc,dict_part):
     norm_hist = hist/double(sum(absolute(hist**r))**(1/r))
     return norm_hist
 
+def calcDistance(t_hist,d_hist):
+    dist_table = []
+    for i in range(0,len(t_hist)):
+        total_dist = 0
+        for j in range(0,len(d_hist)):
+            dist = absolute(t_hist[i]-d_hist[j])
+            total_dist = total_dist + dist
+    dist_table.append(total_dist)
+    return dist_table
+ 
 def main():
     path = './images/'
     d_path = path+'ZhongXiaoEstRd/'
-    #t_path = path+'testcase/'
+    t_path = path+'database/'
     k = 30
     grid_m = 1
     grid_n = 4
@@ -77,6 +84,8 @@ def main():
     print dict_vocab
     d_hist = findWord(dict_vocab,d_path,grid_m,grid_n)
     print d_hist
-    #t_hist = findWord(dict_vocab,t_path,grid_m,grid_n)
+    t_hist = findWord(dict_vocab,t_path,grid_m,grid_n)
+    dist_table = calcDistance(t_hist,d_hist)
+    print dist_table
 
 main()
