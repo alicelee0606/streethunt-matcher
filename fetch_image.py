@@ -12,7 +12,7 @@ API_KEY = "AIzaSyBS-HaMAHhazScAOwdTOaclJEGBNptWFss"
 def fetch_data(street_name, direction):
     print "Fetching data for " + street_name
     query = ParsePy.ParseQuery("Node")
-    query = query.eq("streetName", street_name).eq("direction", direction) 
+    query = query.limit(10000).eq("streetName", street_name).eq("direction", direction) 
     nodes = query.fetch()
     for n in nodes:
         print "(" + str(n.lat) + ", " + str(n.lng) + ")"

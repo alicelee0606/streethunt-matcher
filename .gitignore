@@ -1,4 +1,4 @@
-*.py[cod]
+*py[cod]
 
 # C extensions
 *.so
@@ -40,3 +40,6 @@ nosetests.xml
 images
 *.swp
 *~
+
+# Other local cache files
+.DS_Store
