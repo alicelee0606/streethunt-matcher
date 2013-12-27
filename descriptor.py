@@ -8,7 +8,7 @@ import cv2
 import time
 
 
-def test_feature_detector(imfname, num_slice=1):
+def test_feature_detector(imfname, num_slice=1, save_output=False):
     descript = 'SIFT'
     image = cv2.imread(imfname)
 
@@ -33,7 +33,8 @@ def test_feature_detector(imfname, num_slice=1):
 #    kp_surf = surf.detect(im, None)
         img = cv2.drawKeypoints(im, kp[i], flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
         omfname = "%s_sift_keypoints%d.jpg" % (os.path.splitext(imfname)[0], i)
-        cv2.imwrite(omfname, img)
+        if save_output:
+            cv2.imwrite(omfname, img)
 
     t2 = time.time()
     print 'number of KeyPoint objects', len(kp), '(time', t2-t1, ')'
@@ -51,9 +52,12 @@ def main():
     detector = "FAST"
 
     num_slice = 4
-    if (len(sys.argv) is 3):
+    if (len(sys.argv) >= 3):
        num_slice = int(sys.argv[2])
-    kpts,des = test_feature_detector(imfname, num_slice)
+    save_output = True
+    if (len(sys.argv) >= 4):
+        save_output = (sys.argv[3] == '1')
+    kpts,des = test_feature_detector(imfname, num_slice, save_output)
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
