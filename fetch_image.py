@@ -4,6 +4,7 @@
 import os, sys
 import urllib
 import ParsePy
+import csv
 
 API_KEY = "AIzaSyBS-HaMAHhazScAOwdTOaclJEGBNptWFss"
 # example:
@@ -14,12 +15,19 @@ def fetch_data(street_name, direction):
     query = ParsePy.ParseQuery("Node")
     query = query.limit(10000).eq("streetName", street_name).eq("direction", direction) 
     nodes = query.fetch()
+    data = []
     for n in nodes:
         print "(" + str(n.lat) + ", " + str(n.lng) + ")"
+        data.append([n.lat, n.lng])
         for i in range(8):
             url = imageurl(n.lat, n.lng, i * 45)
             save_image(url, "sv_%f_%f_%d.jpg" % (n.lat, n.lng, i))
     print "Output images are in images/%s/" % (sys.argv[3])
+
+    f = open("images/%s/data.csv" % (sys.argv[3]), 'w')
+    w = csv.writer(f)
+    w.writerows(data)
+    f.close()
 
 def imageurl(lat, lng, heading=0, pitch=0):
     return "http://maps.googleapis.com/maps/api/streetview?size=640x640&location=%f,%f&heading=%.1f&pitch=%.1f&sensor=false&key=AIzaSyBS-HaMAHhazScAOwdTOaclJEGBNptWFss" % (lat, lng, heading, pitch)
