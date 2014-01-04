@@ -2,7 +2,7 @@
 import ParsePy
 import numpy as np
 import cv2
-import sys, os, urllib, csv
+import sys, os, urllib, csv, json
 import geopy
 from math import floor
 from util import *
@@ -10,9 +10,25 @@ from geopy import distance
 from operator import itemgetter
 
 
+"""
+Data Model:
+db_dict = {
+    'file0.jpg':{
+        'lat':23.7584929,
+        'lnt':121.4858102,
+        'descps':[DESCP0_LIST, DESCP1_LIST, DESCP2_LIST, DESCP3_LIST]
+    },
+    'file1.jpg':{
+        ...
+    }
+    ...
+}
+"""
+
 data_points = []
 testcase_data = None
 testcase_video = None
+db_dict = None
 dbname = "database"
 dirname = "XinYiRd-East"
 datafilename = "data.csv"
@@ -23,7 +39,7 @@ def fetch_data(nodes, street_name, direction):
     #print "Fetching data for " + street_name
     data = []
     #dirname = "%s_%s" % (street_name, direction)
-    global dirname
+    global dirname, db_files
     for n in nodes:
         print str(nodes.index(n) + 1) + "/" + str(len(nodes)) + "(" + str(n.lat) + ", " + str(n.lng) + ")"
         data.append([n.lat, n.lng])
@@ -55,7 +71,7 @@ def load_db(street_name=u"信義路", direction=u"東"):
     query = query.limit(10000).eq("streetName", street_name).eq("direction", direction) 
     nodes = query.fetch()
     print "There're %d nodes on the server." % (len(nodes))
-
+    global files
     if not os.path.exists(dirpath):
         fetch_data(nodes, street_name, direction)
     else:
@@ -68,6 +84,10 @@ def load_db(street_name=u"信義路", direction=u"東"):
     
     global data_points
     data_points = [geopy.Point(n.lat, n.lng) for n in nodes]
+
+def build_db_descts():
+    
+
 
 
 def get_near_points(lat, lnt, threshold=NEAR_DISTANCE_THRESHOLD):
@@ -115,9 +135,6 @@ def compare_frame(frame, lat, lnt, n_slice=4):
     print "Ranking:"
     for i in indices:
         print file_set[i], min_dists[i]
-
-
-    
 
 
         
