@@ -14,6 +14,27 @@ from scipy.cluster.vq import kmeans,vq
 from descriptor import test_feature_detector
 from operator import itemgetter
 
+class Matcher:
+    def __init__(self, path):
+        self.__path = path
+
+    def __load_video(self):
+        print "Loading video file from:", self__path
+        video_object = cv2.VideoCapture(self.__path)
+        success = True
+        frame = 0
+        while success:
+            success, frame = video_object.read()
+            if success:
+                cv2.imwrite("%s_%05d.jpg" % (path[:-4], frame))
+        print "Finished loading video. Output %d frames" % (frame + 1)
+
+
+
+
+
+
+
 def main():
     db_path = sys.argv[1] 
     t_file = sys.argv[2]
@@ -32,11 +53,9 @@ def main():
     for i in indices:
         print db_files[i], min_dists[i]
 
-def get_descriptor(imfname, n_slice=1):
-    print 'Compute descriptor for', imfname
-    img = cv2.imread(imfname)
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+def get_descriptor(img, n_slice=1):
 
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     sift = cv2.SIFT(0, 3, 0.04, 10, 1.6)
     h, w = img.shape
     mask = np.zeros((n_slice, h, w), np.uint8)

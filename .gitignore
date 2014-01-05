@@ -37,8 +37,10 @@ nosetests.xml
 
 # StreetView Images
 *.jpg
-images
+database
+testcase
 *.swp
+*.csv
 *~
 
 # Other local cache files
