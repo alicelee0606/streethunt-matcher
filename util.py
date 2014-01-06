@@ -17,6 +17,9 @@ def imageurl(lat, lng, heading=0, pitch=0):
 
 def get_specific_frame(v, frame):
     # CV_CAP_PROP_POS_FRAMES = 1
+    max_frame = v.get(7)
+    if (frame > max_frame):
+        frame = max_frame
     v.set(1, frame)
     f =  v.read()[1]
     return f    
